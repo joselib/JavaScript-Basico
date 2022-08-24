@@ -1,32 +1,20 @@
-const logger = require('./logger');
+const winston = require("winston");
 
+const logger = winston.createLogger({
+    level: "error",
+    format: winston.format.json(),
+    defaultMeta: { service: "user-service" },
+    transports: [
+        new winston.transports.File({ filename: "error.log", level: "error" }),
+    ],
+});
 
-//En el archivo index.js crea una función que devuelva un error con un mensaje personalizado
-const miFuncion = val => {
-    if (typeof val === 'number') {
-        return 2 * val;
-    }
-    throw new Error('El valor no es un numero');
+function showError() {
+    throw new Error("showError function");
 }
-console.log(miFuncion("Hola"));
-
-const numero = "8";
 
 try {
-    //Codi que podria fallar
-    console.log('Se ejecuto el codigo correctamente');
-    const doble = miFuncion(numero);
-    console.log(doble);
+    showError();
 } catch (e) {
-    //Codigo que se ejecuta si ocurre un error
-    logger.error(`El error es: ${e}`);
-    logger.error("error!!");
-} finally {
-    //Codigo que se ejecuta siempre
-    console.log('Se ejecuto el codigo');
+    logger.log("error", e.toString());
 }
-
-logger.info('esto es una info');
-logger.warn('esto es una advertencia');
-logger.error('esto es un error');
-logger.debug('esto es un debug');
